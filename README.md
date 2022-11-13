@@ -30,6 +30,10 @@ Cloudflare Tunnels are [now free](https://blog.cloudflare.com/tunnel-for-everyon
 - Implements the new ES module / Module worker (instead of Service Workers)
 - Secret environment variables
 
+## Component Diagram
+
+![alt text](./docs/Cloudflare_Workers_Tunnel_MySQL.png "Cloudflare Tunnel component diagram")
+
 ## Prerequisites
 
 ### 1. Docker
