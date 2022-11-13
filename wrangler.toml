@@ -1,0 +1,70 @@
+name = "cloudflare-worker-tunnel-mysql-example"
+main = "./dist/index.mjs"
+compatibility_date = "2022-11-11"
+
+
+##
+## --------------------------------------------------------------
+## Global settings, overwritten by environment specific settings.
+## --------------------------------------------------------------
+##
+
+workers_dev = false
+# routes = [
+#     { pattern = "www.example.com/my-page", zone_name = "example.com", custom_domain = true },
+#     { pattern = "example.com/my-page", zone_name = "example.com", custom_domain = true }
+# ]
+
+[vars]
+TUNNEL_HOST = "https://db-tunnel-dev.example.com"
+CF_CLIENT_ID = ""
+CF_CLIENT_SECRET = ""
+## ^^ Populate for development only.  Store in Secrets for other environments.
+
+
+##
+## -------------------
+## Staging Environment
+## --env staging
+## -------------------
+##
+
+[env.staging]
+workers_dev = true
+# routes = [{ pattern = "staging.example.com/my-page", zone_name = "example.com", custom_domain = true }]
+
+[env.staging.vars]
+TUNNEL_HOST = "https://db-tunnel-prod.example.com" ## note: ß"-prod" in domain
+CF_CLIENT_ID = ""
+CF_CLIENT_SECRET = ""
+## ^^ Store these securely in secrets, not here.
+
+##
+## ----------------------
+## Production Environment
+## --env prod
+## ----------------------
+##
+
+[env.prod]
+workers_dev = false
+# routes = [
+#     { pattern = "www.example.com/my-page", zone_name = "example.com", custom_domain = true },
+#     { pattern = "example.com/my-page", zone_name = "example.com", custom_domain = true }
+# ]
+
+[env.prod.vars]
+TUNNEL_HOST = "https://db-tunnel-prod.example.com" ## note: ß"-prod" in domain
+CF_CLIENT_ID = ""
+CF_CLIENT_SECRET = ""
+## ^^ Store these securely in secrets, not here.
+
+##
+## ------------
+## Custom build
+## ------------
+##
+
+[build]
+command = "npm install && npm run build && cp ./src/driver/**/*.wasm ./dist"
+

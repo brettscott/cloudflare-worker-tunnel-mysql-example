@@ -1,0 +1,30 @@
+version: '3.3'
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'appdb'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+
+  cloudflared:
+    image: cloudflare/cloudflared:2021.10.5
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=""
+    volumes:
+      - '~/.cloudflared:/etc/cloudflared' 
+    depends_on:
+      - mysql
+
+volumes:
+  my-db:
