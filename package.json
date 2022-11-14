@@ -9,7 +9,7 @@
     "format": "prettier --write '**/*.{js,css,json,md}'",
     "dev": "npx wranger dev --local",
     "cloudflared": "docker-compose up",
-    "cloudflared:login": "docker run -v ~/.cloudflared:/etc/cloudflared cloudflare/cloudflared:2021.11.0 login",
+    "cloudflared:login": "docker run -v ~/.cloudflared:/etc/cloudflared cloudflare/cloudflared:1280-66d1f2750707 login",
     "publish": "npx wranger publish",
     "publish:staging": "npx wranger publish --env staging",
     "publish:prod": "npx wranger publish --env prod"

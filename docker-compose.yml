@@ -16,7 +16,7 @@ services:
       - my-db:/var/lib/mysql
 
   cloudflared:
-    image: cloudflare/cloudflared:2021.10.5
+    image: cloudflare/cloudflared:1280-66d1f2750707
     restart: unless-stopped
     command: tunnel run
     environment:
