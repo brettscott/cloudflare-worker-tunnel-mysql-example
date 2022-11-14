@@ -2,6 +2,8 @@ import { Client } from './driver/mysql'
 
 type Environment = {
   TUNNEL_HOST: string
+  CF_CLIENT_ID: string
+  CF_CLIENT_SECRET: string
 }
 
 export default {
@@ -16,6 +18,8 @@ export default {
         // https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/create-tunnel
         hostname: env.TUNNEL_HOST || 'https://dev.example.com',
         password: 'password', // use a secret to store passwords
+        cfClientId: env.CF_CLIENT_ID || undefined,
+        cfClientSecret: env.CF_CLIENT_SECRET || undefined,
       })
 
       // Query the database.

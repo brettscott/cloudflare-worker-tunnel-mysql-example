@@ -1,4 +1,4 @@
-name = "cloudflare-worker-tunnel-mysql-example"
+name = "mysql-tunnel-example-dev"
 main = "./dist/index.mjs"
 compatibility_date = "2022-11-11"
 
@@ -9,7 +9,7 @@ compatibility_date = "2022-11-11"
 ## --------------------------------------------------------------
 ##
 
-workers_dev = false
+workers_dev = true
 # routes = [
 #     { pattern = "www.example.com/my-page", zone_name = "example.com", custom_domain = true },
 #     { pattern = "example.com/my-page", zone_name = "example.com", custom_domain = true }
@@ -30,11 +30,12 @@ CF_CLIENT_SECRET = ""
 ##
 
 [env.staging]
-workers_dev = true
+name = "mysql-tunnel-example-staging"
+workers_dev = false
 # routes = [{ pattern = "staging.example.com/my-page", zone_name = "example.com", custom_domain = true }]
 
 [env.staging.vars]
-TUNNEL_HOST = "https://db-tunnel-prod.example.com" ## note: ß"-prod" in domain
+TUNNEL_HOST = "https://db-tunnel-staging.example.com" ## note: "-staging" in domain
 CF_CLIENT_ID = ""
 CF_CLIENT_SECRET = ""
 ## ^^ Store these securely in secrets, not here.
@@ -47,6 +48,7 @@ CF_CLIENT_SECRET = ""
 ##
 
 [env.prod]
+name = "mysql-tunnel-example-prod"
 workers_dev = false
 # routes = [
 #     { pattern = "www.example.com/my-page", zone_name = "example.com", custom_domain = true },
