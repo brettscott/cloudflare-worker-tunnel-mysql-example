@@ -41,6 +41,8 @@ namespace Deno {
      * If not specified, defaults to `127.0.0.1`. */
     hostname?: string
     transport?: 'tcp'
+    cfClientId?: string
+    cfClientSecret?: string
   }
 
   export interface NetAddr {
@@ -154,14 +156,10 @@ namespace Deno {
       // Allows user to connect to Tunnel unauthenticated, or with a Service Token from Access
       // by setting the CF_CLIENT_ID and CF_CLIENT_SECRET secrets in their Worker
       let cfAccess = {}
-
-      // @ts-ignore
-      if (globalThis.CF_CLIENT_ID && globalThis.CF_CLIENT_SECRET) {
+      if (options.cfClientId && options.cfClientSecret) {
         cfAccess = {
-          // @ts-ignore
-          'CF-Access-Client-ID': globalThis.CF_CLIENT_ID,
-          // @ts-ignore
-          'CF-Access-Client-Secret': globalThis.CF_CLIENT_SECRET,
+          'CF-Access-Client-ID': options.cfClientId,
+          'CF-Access-Client-Secret': options.cfClientSecret,
         }
       }
       if (options.hostname === undefined) {
