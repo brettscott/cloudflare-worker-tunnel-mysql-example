@@ -41,6 +41,7 @@ export class Client {
 
     transaction<T = any>(processor: TransactionProcessor<T>): Promise<T>
     
+    close(): Promise<void>
 }
 
 /**

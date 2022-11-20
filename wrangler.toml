@@ -28,7 +28,7 @@ CF_CLIENT_SECRET = ""
 [env.staging]
 name = "mysql-tunnel-example-staging"
 workers_dev = false
-# routes = [{ pattern = "staging.example.com/my-page", zone_name = "example.com", custom_domain = true }]
+# routes = [{ pattern = "staging.example.com/my-page", zone_name = "example.com", custom_domain = false }]
 
 [env.staging.vars]
 TUNNEL_HOST = "https://db-tunnel-staging.example.com" ## note: "-staging" in domain
@@ -48,8 +48,8 @@ CF_CLIENT_SECRET = ""
 name = "mysql-tunnel-example-prod"
 workers_dev = false
 # routes = [
-#     { pattern = "www.example.com/my-page", zone_name = "example.com", custom_domain = true },
-#     { pattern = "example.com/my-page", zone_name = "example.com", custom_domain = true }
+#     { pattern = "www.example.com", zone_name = "example.com", custom_domain = true },
+#     { pattern = "example.com", zone_name = "example.com", custom_domain = true }
 # ]
 
 [env.prod.vars]

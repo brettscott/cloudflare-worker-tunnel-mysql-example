@@ -77,6 +77,8 @@ MySQL will be running within a Docker container, therefore from the perspective 
 
 Note, if you're not running `cloudflared` and MySQL within Docker, use `tcp://localhost:3306` or the appropriate host on your private network.
 
+This will automatically create a DNS CNAME on the domain, pointing to your Tunnel.
+
 ![alt text](./docs/cloudflare-tunnel-setup.jpg "Cloudflare Tunnel dockerised MySQL")
 
 The status of your newly created tunnel will not show as "Active" yet.  It will become active once you've setup and started `cloudflared` in the next step.
