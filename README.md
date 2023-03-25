@@ -181,6 +181,7 @@ When persisted in Secrets environment variables, these will be automatically ava
 - Ensure [docker-compose.yml](./docker-compose.yml) contains your `TUNNEL_TOKEN` from an earlier step.
 - `npm run dev`
 
+If everything has been setup correctly, visiting https://db-tunnel-dev.example.com in the browser should return a Cloudflare Access `403 Forbidden` page.  This is because you haven't made th request with a valid Cloudflare Service Token (`CF-Access-Client-Id` and `CF-Access-Client-Secret` headers).
 
 ### 7. Secure Your Self-Hosted Database
 
