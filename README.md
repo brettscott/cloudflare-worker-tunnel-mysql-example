@@ -13,7 +13,7 @@ This risk can be mitigated by blocking database access to the Internet and inste
 
 This repo is a working improvement on the [worker-mysql](https://github.com/cloudflare/templates/tree/main/worker-mysql) repo from Cloudflare Workers Team, which I was unable to secure with Cloudflare Tunnel and Cloudflare Access.  
 
-This repo runs Cloudflare Tunnel (`cloudflared` service) and MySQL database locally.  These will work on a remote server too.  This example can be modified to support Postgres databases by making the same changes to the Postgres database driver.
+This repo runs Cloudflare Tunnel (`cloudflared` service) and MySQL database locally, in a Docker container.  These will work on a remote server too.  This example can be modified to support Postgres databases by making the same changes to the Postgres database driver.
 
 Cloudflare Tunnels are [now free](https://blog.cloudflare.com/tunnel-for-everyone/).
 
@@ -75,9 +75,9 @@ MySQL will be running within a Docker container, therefore from the perspective 
         - Type: "tcp"
         - URL: "host.docker.internal:3306" 
 
-Note, if you're not running `cloudflared` and MySQL within Docker, use `tcp://localhost:3306` or the appropriate host on your private network.
+Note, if you're NOT running MySQL within Docker, use Service: `tcp://127.0.0.1:3306`.
 
-This will automatically create a DNS CNAME on the domain, pointing to your Tunnel.
+_Ignore warnings regarding DNS entry not existing.  This will automatically create a DNS CNAME on the domain, pointing to your Tunnel._
 
 ![alt text](./docs/cloudflare-tunnel-setup.jpg "Cloudflare Tunnel dockerised MySQL")
 
@@ -92,7 +92,9 @@ From the CLI, login to Cloudflare to authorise the Cloudflare Tunnel.  You will 
 
 Running this command will generate and copy a certifcate to `/home/nonroot/.cloudflared/cert.pem`.  In this example, you do not need to move the cert but may need to copy it to a remote server at a later time should you want to use this tunnel on a remote server.
 
-The `cloudflared` service will need to run within your own server's private network.  In most situations, `cloudflared` will run on the same server as your database server, but it can run on a separate server within your private network.  In this example, `cloudflared` will run within a Docker container alongside MySQL on your local development computer (localhost, host.docker.internal).
+The `cloudflared` service will need to run within your own server's private network.  In most situations, `cloudflared` will run on the same server as your database server, but it can run on a separate server within your private network.  In this example, `cloudflared` will run within a Docker container alongside MySQL on your local development computer (127.0.0.1, host.docker.internal).
+
+Important note: if you're running `cloudflared` within Docker and NOT running MySQL within Docker, use Service: `tcp://127.0.0.1:3306`.  By default, Docker containers cannot make outbound network calls to host (127.0.0.1) ports - therefore Cloudflare cannot reach MySQL running on the host (127.0.0.1).  Setup Cloudflared to run on the same network as the host by adding `network_mode: host` to the [docker-compose.yml](./docker-compose.yml) file (see commented out line).
 
 Modify [docker-compose.yml](./docker-compose.yml) environment variables to include the Cloudflare Tunnel's token from the Cloudflare Tunnel dashboard:
 ```
@@ -138,7 +140,7 @@ Create Application on [Cloudflare Zero Trust](https://one.dash.cloudflare.com/) 
         - Domain eg "example.com" - Dropdown list of your Cloudflare Websites.
 - Step 2:
     - Policy name eg "db-tunnel-dev-policy"
-    - Action: "allow"
+    - Action: "Service Auth"
     - Configure rules:
         - Include selector: "Service Token"
         - Include value (Service Token) eg "db-tunnel-dev-service-token" - The Service Token create in the previous step.
@@ -181,7 +183,11 @@ When persisted in Secrets environment variables, these will be automatically ava
 - Ensure [docker-compose.yml](./docker-compose.yml) contains your `TUNNEL_TOKEN` from an earlier step.
 - `npm run dev`
 
-If everything has been setup correctly, visiting https://db-tunnel-dev.example.com in the browser should return a Cloudflare Access `403 Forbidden` page.  This is because you haven't made th request with a valid Cloudflare Service Token (`CF-Access-Client-Id` and `CF-Access-Client-Secret` headers).
+If everything has been setup correctly, visiting https://db-tunnel-dev.example.com in the browser should return a Cloudflare Access `401 Forbidden` page.  This is because you haven't made th request with a valid Cloudflare Service Token (`CF-Access-Client-Id` and `CF-Access-Client-Secret` headers).
+
+Request public DB endpoint (https://db-tunnel-dev.example.com) from browser, without Service Token, will result in the request being blocked (hooray!):
+
+![alt text](./docs/cloudflare-access-401.jpg "Cloudflare Access returns 401, securing database host")
 
 ### 7. Secure Your Self-Hosted Database
 
@@ -275,6 +281,17 @@ Ensure the Public Hostname for the tunnel is pointing to an IP/hostname accessib
 
 ![alt text](./docs/cloudflare-tunnel-public-hostname-docker.jpg "tcp://host.docker.internal:3306")
 
+## Cannot Connect Cloudflared to MySQL (not in Docker container)
+
+### Error Log
+
+```
+ERR Request failed error="dial tcp 127.0.0.1:3306: connect: connection refused" connIndex=0 dest=<HOST_NAME> ip=<IP_ADDRESS> type=ws
+```
+
+### Resolution
+
+By default, Docker containers cannot make outbound network calls to host (127.0.0.1) ports, therefore Cloudflare cannot reach MySQL running on the host.  Setup Cloudflared to run on the same network as the host by adding `network_mode: host` to the [docker-compose.yml](./docker-compose.yml) file (see commented out line).
 
 ## Contributions and Feedback
 
